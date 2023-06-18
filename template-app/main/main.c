@@ -1,6 +1,7 @@
 /*Sample program two test working of servo motor, buttons, leds using esp32
 requires 2 leds, 2 buttons , 2 1k ohm resistors and a servo.
 Communication to servo is established using mcpwm . 
+Hi
 */
 
 
