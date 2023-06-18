@@ -1,3 +1,10 @@
+/*Sample program two test working of servo motor, buttons, leds using esp32
+requires 2 leds, 2 buttons , 2 1k ohm resistors and a servo.
+Communication to servo is established using mcpwm . 
+*/
+
+
+
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -6,14 +13,15 @@
 #include "driver/mcpwm_prelude.h"
 
 #define LED_PIN  21
+#define LED_PIN_1  23
 #define PUSH_BUTTON_PIN  18
 #define PUSH_BUTTON_PIN_D 12
 
 // Please consult the datasheet of your servo before changing the following parameters
 #define SERVO_MIN_PULSEWIDTH_US 500  // Minimum pulse width in microsecond
 #define SERVO_MAX_PULSEWIDTH_US 2500  // Maximum pulse width in microsecond
-#define SERVO_MIN_DEGREE        -90   // Minimum angle
-#define SERVO_MAX_DEGREE        90    // Maximum angle
+#define SERVO_MIN_DEGREE        -100   // Minimum angle
+#define SERVO_MAX_DEGREE        100    // Maximum angle
 
 #define SERVO_PULSE_GPIO             2        // GPIO connects to the PWM signal line
 #define SERVO_TIMEBASE_RESOLUTION_HZ 1000000  // 1MHz, 1us per tick
@@ -29,7 +37,8 @@ static inline uint32_t example_angle_to_compare(int angle)
 
 void app_main(void)
 {
-    gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);   
+    gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT); 
+    gpio_set_direction(LED_PIN_1, GPIO_MODE_OUTPUT);   
     gpio_set_direction(PUSH_BUTTON_PIN, GPIO_MODE_INPUT);
     gpio_set_pull_mode(PUSH_BUTTON_PIN, GPIO_PULLUP_ONLY);
     gpio_set_direction(PUSH_BUTTON_PIN_D, GPIO_MODE_INPUT);
@@ -100,34 +109,39 @@ void app_main(void)
 
         if (gpio_get_level(PUSH_BUTTON_PIN) == 0)
         {  
-            // ESP_LOGI(TAG ,"Button1 state1: %d",gpio_get_level(PUSH_BUTTON_PIN));
+            ESP_LOGI(TAG ,"Button1 state1: %d",gpio_get_level(PUSH_BUTTON_PIN));
             // if ((angle + step) > 60 || (angle + step) < -60) {
             // step *= -1;
             // }
-            
-            if ((angle + 2) <= 60) {
             angle=angle+2;
+            if ((angle) >=  90) {
+                angle = 90;
             }
-            gpio_set_level(LED_PIN, 1);        
+            gpio_set_level(LED_PIN_1, 1);
+            vTaskDelay(50);
+            gpio_set_level(LED_PIN_1, 0);        
         }
-        if (gpio_get_level(PUSH_BUTTON_PIN_D) == 0)
+        else if (gpio_get_level(PUSH_BUTTON_PIN_D) == 0)
         {  
-            // ESP_LOGI(TAG ,"Button2 state: %d",gpio_get_level(PUSH_BUTTON_PIN_D));
+            ESP_LOGI(TAG ,"Button2 state: %d",gpio_get_level(PUSH_BUTTON_PIN_D));
             // if ((angle + step) > 60 || (angle + step) < -60) {
             // step *= -1;
             // }
-            
-            if ((angle - 2) >= -60) {
             angle=angle-2;
+            if ((angle ) <= -90) {
+                angle = -90;
             }
-            gpio_set_level(LED_PIN, 1);        
+            gpio_set_level(LED_PIN, 1);
+            vTaskDelay(50);
+            gpio_set_level(LED_PIN, 0);        
         } 
         else
         {
-            ESP_LOGI(TAG ,"Button state2: %d",gpio_get_level(PUSH_BUTTON_PIN_D));
-            gpio_set_level(LED_PIN, 0);        
+            // ESP_LOGI(TAG ,"Button state2: %d",gpio_get_level(PUSH_BUTTON_PIN_D));
+            gpio_set_level(LED_PIN, 0);
+            gpio_set_level(LED_PIN_1, 0);        
         }
 
-        vTaskDelay(1);
+        vTaskDelay(10);
     }
 } 
