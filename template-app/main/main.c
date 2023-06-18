@@ -115,7 +115,7 @@ void app_main(void)
             // }
             angle=angle+2;
             if ((angle) >=  90) {
-                angle = 90;
+                angle = 90;``
             }
             gpio_set_level(LED_PIN_1, 1);
             vTaskDelay(50);
@@ -145,3 +145,7 @@ void app_main(void)
         vTaskDelay(10);
     }
 } 
+/*git branch -m master main
+git fetch origin
+git branch -u origin/main main
+git remote set-head origin -a*/
